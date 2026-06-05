@@ -49,3 +49,32 @@ def get_cw_matrices(n: float) -> tuple[np.ndarray, np.ndarray]:
     ])
 
     return A, B
+
+def discretize_cw(n: float, dt: float) -> tuple[np.ndarray, np.ndarray]:
+
+    """
+    Args:
+        n: mean motion of target orbit (rad/s)
+        dt: timestep in seconds (s)
+
+    Returns:
+        Ad: discretized system matrix (6,6)
+        Bd: discretized input matrix (6,3)
+
+    """
+
+    A, B = get_cw_matrices(n)
+
+    n_states = A.shape[0]   #6
+    n_inputs = B.shape[1]  #3
+
+    M = np.zeros((n_states + n_inputs, n_states + n_inputs))
+    M[:n_states, :n_states] = A*dt
+    M[:n_states, n_states:] = B*dt
+
+    expM = expm(M)
+
+    Ad = expM[:n_states, :n_states]
+    Bd = expM[:n_states, n_states:]
+
+    return Ad, Bd
