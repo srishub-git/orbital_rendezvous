@@ -78,3 +78,21 @@ def discretize_cw(n: float, dt: float) -> tuple[np.ndarray, np.ndarray]:
     Bd = expM[:n_states, n_states:]
 
     return Ad, Bd
+
+def orbital_mean_motion(altitude_km: float) -> float:
+
+    """
+    Args:
+    altitude_km: how high the spacecraft is (km)
+
+    Returns:
+    n: mean motion of the chaser orbit (rad/s)
+
+    """
+    mu = 3.986004418e14
+    R_earth = 6.371e6
+
+    a = R_earth + (altitude_km*1000)
+    n = np.sqrt(mu/a**3)
+
+    return n
